@@ -1,12 +1,11 @@
-import { 
-  searchWeb, 
-  formatSearchResultsForAI, 
-  generateSearchQuery, 
-  isSearchConfigured 
+import {
+  searchWeb,
+  formatSearchResultsForAI,
+  generateSearchQuery,
+  isSearchConfigured
 } from './webSearchService';
 
-const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
+const GROQ_API_URL = '/api/chat';
 
 export const GROQ_MODELS = {
   LLAMA_70B: 'llama-3.1-70b-versatile',     
@@ -34,12 +33,6 @@ export async function sendMessageToGroq(
   conversationHistory: GroqMessage[] = [],
   options: GroqChatOptions = {}
 ): Promise<string> {
-  if (!GROQ_API_KEY || GROQ_API_KEY === '') {
-    throw new Error(
-      'Serviço temporariamente indisponível.'
-    );
-  }
-
   let searchContext = '';
   
   if (!isSearchConfigured()) {
@@ -102,7 +95,6 @@ export async function sendMessageToGroq(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${GROQ_API_KEY}`,
       },
       body: JSON.stringify({
         model,
@@ -227,7 +219,7 @@ Seja direto, objetivo e sempre cite fontes.`;
 }
 
 export function isGroqConfigured(): boolean {
-  return Boolean(GROQ_API_KEY && GROQ_API_KEY.trim() !== '');
+  return true; // Verificação agora é feita no servidor
 }
 
 export async function validateGroqApiKey(): Promise<boolean> {

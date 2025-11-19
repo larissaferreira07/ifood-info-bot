@@ -1,5 +1,4 @@
-const TAVILY_API_URL = 'https://api.tavily.com/search';
-const TAVILY_API_KEY = import.meta.env.VITE_TAVILY_API_KEY;
+const TAVILY_API_URL = '/api/search';
 
 export interface SearchResult {
   title: string;
@@ -16,7 +15,7 @@ export interface WebSearchResponse {
 }
 
 export function isSearchConfigured(): boolean {
-  return Boolean(TAVILY_API_KEY && TAVILY_API_KEY !== '');
+  return true; // Verificação agora é feita no servidor
 }
 
 
@@ -37,7 +36,6 @@ export async function searchWeb(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        api_key: TAVILY_API_KEY,
         query: query,
         search_depth: 'advanced',
         include_answer: false,
