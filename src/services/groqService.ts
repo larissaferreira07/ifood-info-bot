@@ -6,7 +6,7 @@ import {
 } from './webSearchService';
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const GROQ_API_KEY = import.meta.env.VITE_TAVILY_API_KEY;
+const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 
 export const GROQ_MODELS = {
   LLAMA_70B: 'llama-3.1-70b-versatile',     
