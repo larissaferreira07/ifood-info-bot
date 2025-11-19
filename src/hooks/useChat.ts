@@ -99,7 +99,7 @@ export const useChat = (conversationId?: string) => {
       if (!isGroqConfigured()) {
         const errorMessage: Message = {
           id: Date.now().toString(),
-          text: 'A integracao com IA nao esta configurada. Por favor, configure a chave da API Groq no arquivo .env.\n\nVeja o arquivo CHATBOT_AI_README.md para instrucoes.',
+          text: 'Serviço temporariamente indisponível. Tente novamente mais tarde.',
           sender: 'bot',
           timestamp: new Date().toISOString(),
           type: 'text',

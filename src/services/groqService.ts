@@ -6,7 +6,7 @@ import {
 } from './webSearchService';
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const GROQ_API_KEY = import.meta.env.PRIVATE_GROQ_API_KEY;
+const GROQ_API_KEY = import.meta.env.VITE_TAVILY_API_KEY;
 
 export const GROQ_MODELS = {
   LLAMA_70B: 'llama-3.1-70b-versatile',     
@@ -36,7 +36,7 @@ export async function sendMessageToGroq(
 ): Promise<string> {
   if (!GROQ_API_KEY || GROQ_API_KEY === '') {
     throw new Error(
-      'Chave API do Groq não configurada. Configure PRIVATE_GROQ_API_KEY no arquivo .env'
+      'Serviço temporariamente indisponível.'
     );
   }
 
@@ -44,7 +44,7 @@ export async function sendMessageToGroq(
   
   if (!isSearchConfigured()) {
     throw new Error(
-      'API de busca não configurada. Configure PRIVATE_TAVILY_API_KEY no arquivo .env para habilitar busca na web obrigatória.'
+      'Serviço de busca temporariamente indisponível.'
     );
   }
 
@@ -74,7 +74,7 @@ export async function sendMessageToGroq(
       if (searchError.message.includes('API')) {
         errorMessage = `Erro na API de busca: ${searchError.message}`;
       } else if (searchError.message.includes('401')) {
-        errorMessage = 'Chave da API de busca inválida. Verifique PRIVATE_TAVILY_API_KEY no .env';
+        errorMessage = 'Erro na autenticação do serviço de busca.';
       } else if (searchError.message.includes('429')) {
         errorMessage = 'Limite de buscas excedido. Tente novamente mais tarde.';
       } else {

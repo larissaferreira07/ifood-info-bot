@@ -1,5 +1,5 @@
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const GROQ_API_KEY = import.meta.env.PRIVATE_GROQ_API_KEY;
+const GROQ_API_KEY = import.meta.env.VITE_TAVILY_API_KEY;
 
 export interface ModerationResult {
   isAllowed: boolean;

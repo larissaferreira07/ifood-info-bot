@@ -1,5 +1,5 @@
 const TAVILY_API_URL = 'https://api.tavily.com/search';
-const TAVILY_API_KEY = import.meta.env.PRIVATE_TAVILY_API_KEY;
+const TAVILY_API_KEY = import.meta.env.VITE_TAVILY_API_KEY;
 
 export interface SearchResult {
   title: string;
@@ -26,7 +26,7 @@ export async function searchWeb(
 ): Promise<WebSearchResponse> {
   if (!isSearchConfigured()) {
     throw new Error(
-      'API de busca não configurada. Configure PRIVATE_TAVILY_API_KEY no arquivo .env'
+      'Serviço de busca temporariamente indisponível.'
     );
   }
 
