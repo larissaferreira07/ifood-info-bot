@@ -226,7 +226,7 @@ export function ChatSidebar({
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <button
-                              className="h-5 w-5 p-0 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hover:bg-transparent rounded"
+                              className="h-5 w-5 p-0 flex-shrink-0 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex items-center justify-center hover:bg-transparent rounded"
                               onClick={(e) => e.stopPropagation()}
                             >
                               <MoreVertical className="h-3.5 w-3.5 text-muted-foreground" />

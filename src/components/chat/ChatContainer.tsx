@@ -124,6 +124,10 @@ export const ChatContainer = () => {
       } else {
         setActiveConversationId(null);
         clearChat();
+        // Hide sidebar on mobile to show welcome screen
+        if (window.innerWidth < 768) {
+          setIsSidebarVisible(false);
+        }
       }
     }
   };

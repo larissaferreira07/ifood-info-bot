@@ -61,9 +61,9 @@ export const MessageItem = ({ message, onActionClick, onThemeClick, onBackClick 
 
   if (message.type === 'theme-menu' && message.themeData) {
     return (
-      <div className="w-full animate-fade-in">
+      <div className="w-full animate-fade-in px-3">
         <div className="flex w-full justify-start">
-          <div className="max-w-[85%] md:max-w-[75%] px-4 py-3 rounded-xl shadow-sm transition-all duration-300 hover:shadow-md bg-white dark:bg-card border border-border/50 rounded-bl-none">
+          <div className="w-full px-4 py-3 rounded-xl shadow-sm transition-all duration-300 hover:shadow-md bg-white dark:bg-card border border-border/50 rounded-bl-none overflow-hidden">
             <ThemeMenu
               themes={message.themeData.themes}
               onThemeClick={onThemeClick || (() => {})}
@@ -92,7 +92,7 @@ export const MessageItem = ({ message, onActionClick, onThemeClick, onBackClick 
   }
 
   return (
-    <div className="w-full animate-fade-in space-y-2">
+    <div className="w-full animate-fade-in space-y-2 px-3">
       <div
         className={cn(
           'flex w-full',
@@ -101,15 +101,15 @@ export const MessageItem = ({ message, onActionClick, onThemeClick, onBackClick 
       >
         <div
           className={cn(
-            'max-w-[85%] md:max-w-[75%] px-4 py-3 rounded-xl shadow-sm transition-all duration-300 hover:shadow-md',
+            'w-full px-4 py-3 rounded-xl shadow-sm transition-all duration-300 hover:shadow-md overflow-hidden',
             isUser
               ? 'bg-primary/20 dark:bg-primary/25 border-l-4 border-primary rounded-br-none'
               : 'bg-white dark:bg-card border border-border/50 rounded-bl-none'
           )}
         >
-          <div className="prose prose-sm max-w-none dark:prose-invert prose-p:leading-relaxed prose-p:my-1.5 prose-headings:my-2 prose-ul:my-1 prose-li:my-0">
+          <div className="prose prose-sm max-w-none dark:prose-invert prose-p:leading-relaxed prose-p:my-1.5 prose-headings:my-2 prose-ul:my-1 prose-li:my-0 break-words overflow-wrap-anywhere">
             {isUser ? (
-              <div className="text-sm leading-relaxed whitespace-pre-wrap text-foreground">{message.text}</div>
+              <div className="text-sm leading-relaxed whitespace-pre-wrap text-foreground break-words">{message.text}</div>
             ) : (
               <ReactMarkdown
                 components={{
@@ -200,7 +200,7 @@ export const MessageItem = ({ message, onActionClick, onThemeClick, onBackClick 
       </div>
       
       {!isUser && message.actions && message.actions.length > 0 && (
-        <div className="flex flex-wrap gap-2 ml-2">
+        <div className="flex flex-wrap gap-2">
           {message.actions.map((action, index) => (
             <Button
               key={index}
