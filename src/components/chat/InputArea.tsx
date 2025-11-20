@@ -33,7 +33,7 @@ export const InputArea = ({ value, onChange, onSend, disabled }: InputAreaProps)
   };
 
   return (
-    <div className="border-t border-border bg-card p-4">
+    <div className="border-t border-border bg-card p-3 md:p-4 flex-shrink-0">
       <div className="flex gap-2 items-end">
         <div className="flex-1 relative">
           <Textarea

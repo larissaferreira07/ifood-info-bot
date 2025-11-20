@@ -23,7 +23,7 @@ export const ChatHeader = ({
   isSidebarVisible,
 }: ChatHeaderProps) => {
   return (
-    <header className="h-16 border-b border-border bg-card flex items-center justify-between px-4 shadow-sm">
+    <header className="h-14 md:h-16 border-b border-border bg-card flex items-center justify-between px-3 md:px-4 shadow-sm flex-shrink-0">
       <div className="flex items-center gap-3">
         {onToggleSidebar && (
           <Button

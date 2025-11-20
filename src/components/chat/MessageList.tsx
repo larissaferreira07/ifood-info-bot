@@ -25,10 +25,10 @@ export const MessageList = ({
   onBackClick,
 }: MessageListProps) => {
   return (
-    <div 
-      className="flex-1 overflow-y-auto p-6 pb-6 relative flex justify-center bg-background transition-colors duration-300"
+    <div
+      className="flex-1 overflow-y-auto p-3 md:p-6 pb-3 md:pb-6 relative flex justify-center bg-background transition-colors duration-300"
     >
-      <div className="space-y-4 w-full max-w-4xl">
+      <div className="space-y-3 md:space-y-4 w-full max-w-4xl">
         {messages.map((message) => (
           <MessageItem 
             key={message.id} 
