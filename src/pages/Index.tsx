@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 
 const Index = () => {
   return (
-    <div className="h-screen w-screen bg-background flex flex-col overflow-hidden">
-      <main className="flex-1 flex items-center justify-center px-4 overflow-hidden">
+    <div className="min-h-screen w-screen bg-background flex flex-col">
+      <main className="flex-1 flex items-center justify-center px-4">
         <div className="max-w-3xl mx-auto text-center space-y-8 md:space-y-12 py-8 md:py-20">
 
           <div className="space-y-4 md:space-y-6 animate-slide-up">
@@ -29,10 +29,10 @@ const Index = () => {
         </div>
       </main>
 
-      <footer className="border-t border-border/50 py-4 md:py-6 px-4 flex-shrink-0">
+      <footer className="border-t border-border/50 py-4 md:py-6 px-4 flex-shrink-0 bg-background">
         <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-2 md:gap-4 text-xs text-muted-foreground">
-            <div>
+          <div className="flex flex-col md:flex-row justify-between items-center gap-2 md:gap-4 text-xs md:text-sm text-muted-foreground">
+            <div className="text-center md:text-left">
               <span className="font-medium text-foreground">iFood Info Bot</span> • Desenvolvido por Larissa Ferreira
             </div>
             <div className="text-center md:text-right">

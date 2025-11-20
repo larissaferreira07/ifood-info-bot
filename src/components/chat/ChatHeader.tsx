@@ -23,24 +23,24 @@ export const ChatHeader = ({
   isSidebarVisible,
 }: ChatHeaderProps) => {
   return (
-    <header className="h-14 md:h-16 border-b border-border bg-card flex items-center justify-between px-3 md:px-4 shadow-sm flex-shrink-0">
-      <div className="flex items-center gap-3">
+    <header className="h-14 md:h-16 border-b border-border bg-card flex items-center justify-between px-3 md:px-4 shadow-sm flex-shrink-0 sticky top-0 z-10">
+      <div className="flex items-center gap-2 md:gap-3 min-w-0">
         {onToggleSidebar && (
           <Button
             variant="ghost"
             size="icon"
             onClick={onToggleSidebar}
-            className="h-9 w-9 md:hidden"
+            className="h-9 w-9 md:hidden shrink-0"
             title={isSidebarVisible ? 'Ocultar conversas' : 'Mostrar conversas'}
           >
             <Menu className="h-5 w-5" />
           </Button>
         )}
-        <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold text-xl">
+        <div className="w-8 h-8 md:w-10 md:h-10 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold text-lg md:text-xl shrink-0">
           iF
         </div>
-        <div>
-          <h1 className="font-semibold text-foreground">iFood Info Bot</h1>
+        <div className="min-w-0">
+          <h1 className="font-semibold text-foreground text-sm md:text-base truncate">iFood Info Bot</h1>
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
             <span>Online</span>
@@ -48,7 +48,7 @@ export const ChatHeader = ({
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 md:gap-2 shrink-0">
         <Button
           variant="ghost"
           size="icon"

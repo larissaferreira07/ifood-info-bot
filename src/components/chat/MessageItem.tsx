@@ -18,37 +18,53 @@ const getTitleFromUrl = (url: string): string => {
     const urlObj = new URL(url);
     const domain = urlObj.hostname.replace('www.', '');
     
-    // Mapear domínios conhecidos para títulos amigáveis
-    const domainTitles: Record<string, string> = {
-      'ifood.com.br': 'iFood - Site Oficial',
-      'carreiras.ifood.com.br': 'iFood Carreiras',
-      'blog.ifood.com.br': 'Blog iFood',
-      'imprensa.ifood.com.br': 'iFood Imprensa',
-      'entregador.ifood.com.br': 'Portal do Entregador',
-      'parceiro.ifood.com.br': 'Portal do Parceiro',
-    };
-
-    if (domainTitles[domain]) {
-      return domainTitles[domain];
-    }
-
-    // Tentar extrair título do pathname
+    // Tentar extrair título significativo do pathname primeiro
     const pathname = urlObj.pathname;
-    if (pathname && pathname !== '/') {
+    if (pathname && pathname !== '/' && pathname !== '') {
       const parts = pathname.split('/').filter(p => p);
       if (parts.length > 0) {
+        // Pegar a última parte do caminho que geralmente é mais específica
         const lastPart = parts[parts.length - 1]
           .replace(/-/g, ' ')
           .replace(/_/g, ' ')
-          .replace(/\.html?$/i, '');
-        return lastPart.charAt(0).toUpperCase() + lastPart.slice(1);
+          .replace(/\.html?$/i, '')
+          .replace(/\.php$/i, '')
+          .replace(/\.aspx?$/i, '');
+        
+        // Se a parte tem conteúdo significativo (não é só números)
+        if (lastPart && !/^\d+$/.test(lastPart)) {
+          // Capitalizar cada palavra
+          const title = lastPart
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+          
+          // Limitar o tamanho
+          return title.length > 45 ? title.substring(0, 42) + '...' : title;
+        }
       }
     }
 
-    // Fallback para domínio
-    return domain.split('.')[0].charAt(0).toUpperCase() + domain.split('.')[0].slice(1);
+    // Fallback: usar o domínio de forma amigável
+    // Remover TLD e capitalizar
+    const domainParts = domain.split('.');
+    const mainDomain = domainParts[0];
+    
+    // Se for subdomínio conhecido, usar formato especial
+    if (domainParts.length > 2) {
+      const subdomain = domainParts[0];
+      const baseDomain = domainParts[1];
+      
+      const subdomainFormatted = subdomain.charAt(0).toUpperCase() + subdomain.slice(1);
+      const baseDomainFormatted = baseDomain.charAt(0).toUpperCase() + baseDomain.slice(1);
+      
+      return `${subdomainFormatted} - ${baseDomainFormatted}`;
+    }
+    
+    // Apenas capitalizar o domínio principal
+    return mainDomain.charAt(0).toUpperCase() + mainDomain.slice(1);
   } catch {
-    return 'Fonte Externa';
+    return 'Ver fonte';
   }
 };
 
@@ -162,8 +178,8 @@ export const MessageItem = ({ message, onActionClick, onThemeClick, onBackClick 
                     ul: ({ children }) => <ul className="list-none space-y-1.5">{children}</ul>,
                     li: ({ children }) => (
                       <li className="flex items-start gap-1.5 text-muted-foreground/80">
-                        <span className="text-muted-foreground/50 mt-0.5 text-xs">•</span>
-                        <span className="flex-1 leading-relaxed">{children}</span>
+                        <span className="text-muted-foreground/50 mt-0.5 text-xs shrink-0">•</span>
+                        <span className="flex-1 leading-relaxed min-w-0">{children}</span>
                       </li>
                     ),
                     a: ({ children, href }) => {
@@ -173,7 +189,7 @@ export const MessageItem = ({ message, onActionClick, onThemeClick, onBackClick 
                           href={href} 
                           target="_blank" 
                           rel="noopener noreferrer" 
-                          className="text-red-600 dark:text-red-500 hover:text-red-700 dark:hover:text-red-400 hover:underline transition-colors break-words text-[11px] font-medium"
+                          className="text-red-600 dark:text-red-500 hover:text-red-700 dark:hover:text-red-400 hover:underline transition-colors text-[11px] font-medium inline-block break-words max-w-full"
                           title={href}
                         >
                           {title}

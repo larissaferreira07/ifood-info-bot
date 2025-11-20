@@ -169,7 +169,7 @@ export const ChatContainer = () => {
       </div>
 
       <div className={cn(
-        'flex-1 flex flex-col min-w-0 transition-opacity duration-300',
+        'flex-1 flex flex-col min-w-0 h-full transition-opacity duration-300',
         isSidebarVisible && 'hidden md:flex'
       )}>
         {activeConversationId ? (
