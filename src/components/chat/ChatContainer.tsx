@@ -149,12 +149,12 @@ export const ChatContainer = () => {
 
   return (
     <div className="flex h-full w-full bg-background overflow-hidden">
+      {/* Sidebar - overlay no mobile, fixa no desktop */}
       <div
         className={cn(
-          'transition-all duration-300 border-r',
-          isSidebarVisible ? 'w-full md:w-[420px]' : 'w-0',
-          'md:block',
-          !isSidebarVisible && 'hidden md:hidden'
+          'fixed md:relative inset-0 md:inset-auto z-50 md:z-auto transition-all duration-300 border-r md:border-r',
+          isSidebarVisible ? 'w-full md:w-[420px]' : 'w-0 -translate-x-full md:translate-x-0',
+          !isSidebarVisible && 'hidden'
         )}
       >
         <ChatSidebar
@@ -168,10 +168,8 @@ export const ChatContainer = () => {
         />
       </div>
 
-      <div className={cn(
-        'flex-1 flex flex-col min-w-0 h-full transition-opacity duration-300',
-        isSidebarVisible && 'hidden md:flex'
-      )}>
+      {/* Área principal do chat - sempre visível */}
+      <div className="flex-1 flex flex-col min-w-0 h-full w-full">
         {activeConversationId ? (
           <>
             <ChatHeader

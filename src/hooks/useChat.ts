@@ -114,9 +114,9 @@ export const useChat = (conversationId?: string) => {
         let responseText = '';
 
         if (moderation.category === 'inappropriate') {
-          responseText = `Desculpe, não posso processar essa mensagem.\n\n${moderation.reason || 'O conteúdo enviado não é apropriado.'}\n\nPor favor, mantenha uma comunicação respeitosa e educada.`;
+          responseText = `**Conteúdo não permitido**\n\n${moderation.reason || 'O conteúdo enviado não é apropriado.'}\n\nPor favor, mantenha uma comunicação respeitosa e educada.`;
         } else if (moderation.category === 'off-topic') {
-          responseText = `${moderation.reason || 'Esta pergunta está fora do meu escopo de conhecimento.'}\n\nSou especializado exclusivamente em informações sobre o iFood. Posso ajudá-lo com:\n\n- Serviços e funcionalidades do iFood\n- Números, estatísticas e dados da empresa\n- Carreiras e processos seletivos\n- Notícias e novidades\n- Comparações com concorrentes\n- Informações para restaurantes e entregadores\n\nComo posso ajudá-lo com questões relacionadas ao iFood?`;
+          responseText = `**Pergunta fora do escopo**\n\n${moderation.reason || 'Esta pergunta não está relacionada ao iFood.'}\n\n**Posso ajudar com:**\n\n• Serviços do iFood (Delivery, Mercado, Farmácia, Shops, Benefícios)\n• História, números e estatísticas da empresa\n• Carreiras e processos seletivos\n• Notícias e novidades sobre o iFood\n• Comparações com concorrentes (Rappi, Uber Eats)\n• Informações para restaurantes parceiros e entregadores\n\nComo posso ajudá-lo com questões relacionadas ao **iFood**?`;
         } else {
           responseText = moderation.reason || 'Conteúdo não permitido.';
         }

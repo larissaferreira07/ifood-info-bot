@@ -168,34 +168,32 @@ export const MessageItem = ({ message, onActionClick, onThemeClick, onBackClick 
           {hasSources && sourcesContent && (
             <div className="mt-4 pt-3 border-t border-border/20">
               <div className="flex items-center gap-2 mb-2">
-                <div className="text-[10px] font-medium text-muted-foreground/70 uppercase tracking-wide">
-                  Fontes
+                <div className="text-[11px] font-semibold text-muted-foreground/80 uppercase tracking-wide">
+                  Fontes Consultadas
                 </div>
               </div>
-              <div className="space-y-1.5 text-xs">
+              <div className="space-y-2 text-sm">
                 <ReactMarkdown
                   components={{
-                    ul: ({ children }) => <ul className="list-none space-y-1.5">{children}</ul>,
+                    ul: ({ children }) => <ul className="list-none space-y-2">{children}</ul>,
                     li: ({ children }) => (
-                      <li className="flex items-start gap-1.5 text-muted-foreground/80">
-                        <span className="text-muted-foreground/50 mt-0.5 text-xs shrink-0">•</span>
-                        <span className="flex-1 leading-relaxed min-w-0">{children}</span>
+                      <li className="flex items-start gap-2 text-muted-foreground/90 leading-relaxed">
+                        <span className="text-red-500 mt-1 text-xs shrink-0">▸</span>
+                        <span className="flex-1 min-w-0">{children}</span>
                       </li>
                     ),
-                    a: ({ children, href }) => {
-                      const title = href ? getTitleFromUrl(href) : String(children);
-                      return (
-                        <a 
-                          href={href} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          className="text-red-600 dark:text-red-500 hover:text-red-700 dark:hover:text-red-400 hover:underline transition-colors text-[11px] font-medium inline-block break-words max-w-full"
-                          title={href}
-                        >
-                          {title}
-                        </a>
-                      );
-                    },
+                    a: ({ children, href }) => (
+                      <a 
+                        href={href} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="text-red-600 dark:text-red-500 hover:text-red-700 dark:hover:text-red-400 hover:underline transition-colors font-medium inline break-words"
+                        title={href}
+                      >
+                        {children}
+                      </a>
+                    ),
+                    p: ({ children }) => <span className="inline">{children}</span>,
                   }}
                 >
                   {sourcesContent}
