@@ -116,7 +116,7 @@ export const useChat = (conversationId?: string) => {
         if (moderation.category === 'inappropriate') {
           responseText = `**Conteúdo não permitido**\n\n${moderation.reason || 'O conteúdo enviado não é apropriado.'}\n\nPor favor, mantenha uma comunicação respeitosa e educada.`;
         } else if (moderation.category === 'off-topic') {
-          responseText = `**Pergunta fora do escopo**\n\n${moderation.reason || 'Esta pergunta não está relacionada ao iFood.'}\n\n**Posso ajudar com:**\n\n• Serviços do iFood (Delivery, Mercado, Farmácia, Shops, Benefícios)\n• História, números e estatísticas da empresa\n• Carreiras e processos seletivos\n• Notícias e novidades sobre o iFood\n• Comparações com concorrentes (Rappi, Uber Eats)\n• Informações para restaurantes parceiros e entregadores\n\nComo posso ajudá-lo com questões relacionadas ao **iFood**?`;
+          responseText = `Desculpe, só posso responder perguntas relacionadas ao iFood.`;
         } else {
           responseText = moderation.reason || 'Conteúdo não permitido.';
         }
