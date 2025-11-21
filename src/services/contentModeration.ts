@@ -6,9 +6,174 @@ export interface ModerationResult {
   reason?: string;
   category?: 'inappropriate' | 'off-topic' | 'allowed';
   confidence?: number;
+  source?: 'local' | 'llm';
 }
 
 const MODERATION_PROMPT_VERSION = '2.0';
+
+// ============================================================
+// CAMADA 1: PRÉ-VALIDAÇÃO LOCAL (rápida, sem custo)
+// ============================================================
+
+interface LocalValidationResult {
+  decision: 'allow' | 'block' | 'needs_llm';
+  result?: ModerationResult;
+}
+
+/**
+ * Pré-validação local para casos óbvios
+ * Retorna decisão imediata ou indica necessidade de LLM
+ */
+function localPreValidation(message: string): LocalValidationResult {
+  const lowerMessage = message.toLowerCase().trim();
+  const normalizedMessage = lowerMessage
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, ''); // Remove acentos para matching
+
+  // === PERMITIR DIRETAMENTE: Saudações e agradecimentos ===
+  const greetingPatterns = [
+    /^(oi|ola|hey|eai|e ai|iae|fala|salve|yo)[\s!?.]*$/,
+    /^(bom dia|boa tarde|boa noite)[\s!?.]*$/,
+    /^(tudo bem|tudo certo|como vai|beleza)[\s!?.]*$/,
+    /^(obrigad[oa]|valeu|vlw|brigad[oa]|thanks|grat[oa])[\s!?.]*$/,
+    /^(tchau|ate mais|ate logo|flw|falou)[\s!?.]*$/,
+  ];
+
+  for (const pattern of greetingPatterns) {
+    if (pattern.test(normalizedMessage)) {
+      return {
+        decision: 'allow',
+        result: {
+          isAllowed: true,
+          category: 'allowed',
+          confidence: 1.0,
+          source: 'local',
+        },
+      };
+    }
+  }
+
+  // === BLOQUEAR: Palavrões e conteúdo inapropriado óbvio ===
+  const inappropriatePatterns = [
+    // Palavrões comuns (versões com e sem acentos)
+    /\b(porra|caralho|foda|foder|fodase|pqp|vsf|tnc|fdp|puta|putaria|merda|bosta|cuzao|cuzão|arrombad|viado|vagabund)\b/,
+    // Termos sexuais
+    /\b(sexo|porn[oô]|nude|nudes|gostosa|gostoso|tesao|tesão|putaria|safad[oa])\b/,
+    // Violência e drogas
+    /\b(matar|morte|suicid|drogas?|cocaina|maconha|crack|heroina)\b/,
+    // Discriminação
+    /\b(nazist|hitler|racis|homofob|transfob)\b/,
+  ];
+
+  for (const pattern of inappropriatePatterns) {
+    if (pattern.test(normalizedMessage)) {
+      return {
+        decision: 'block',
+        result: {
+          isAllowed: false,
+          category: 'inappropriate',
+          reason: 'Conteúdo não permitido',
+          confidence: 0.95,
+          source: 'local',
+        },
+      };
+    }
+  }
+
+  // === BLOQUEAR: Off-topic óbvio ===
+
+  // Outras empresas de delivery (sem mencionar iFood)
+  const competitorPatterns = [
+    /\b(rappi|uber\s*eats|99\s*food|james|zé\s*delivery|aiqfome)\b/,
+  ];
+
+  // Verifica se menciona concorrente SEM mencionar iFood
+  const mentionsIfood = /ifood|i-food|i food/.test(normalizedMessage);
+
+  for (const pattern of competitorPatterns) {
+    if (pattern.test(normalizedMessage) && !mentionsIfood) {
+      return {
+        decision: 'block',
+        result: {
+          isAllowed: false,
+          category: 'off-topic',
+          reason: 'Só posso responder perguntas relacionadas ao iFood',
+          confidence: 0.9,
+          source: 'local',
+        },
+      };
+    }
+  }
+
+  // Receitas e culinária (padrões óbvios)
+  const recipePatterns = [
+    /\b(receita|como (fazer|preparar|cozinhar)|modo de preparo|ingredientes para)\b/,
+    /\b(como faz|como faço|ensina a fazer)\s+(bolo|pizza|hamburguer|lasanha|macarr|arroz|feij)/,
+  ];
+
+  for (const pattern of recipePatterns) {
+    if (pattern.test(normalizedMessage) && !mentionsIfood) {
+      return {
+        decision: 'block',
+        result: {
+          isAllowed: false,
+          category: 'off-topic',
+          reason: 'Só posso responder perguntas relacionadas ao iFood',
+          confidence: 0.85,
+          source: 'local',
+        },
+      };
+    }
+  }
+
+  // Assuntos claramente não relacionados
+  const offTopicPatterns = [
+    // Conhecimento geral
+    /\b(capital d[aoe]|presidente d[aoe]|quem (foi|é|era)|quando (foi|nasceu|morreu))\b/,
+    // Matemática/Ciência
+    /\b(quanto é|calcul|equação|fórmula|teorema|raiz quadrada)\b/,
+    // Programação genérica (sem ser sobre iFood)
+    /\b(como programar|codigo|código|python|javascript|java|react|criar (um |)app)\b/,
+    // Esportes
+    /\b(futebol|corinthians|flamengo|palmeiras|são paulo|gol|campeonato|copa)\b/,
+    // Entretenimento
+    /\b(filme|serie|netflix|música|cantor|banda|novela)\b/,
+    // Saúde/Dieta (sem contexto de iFood)
+    /\b(dieta|emagrecer|calorias|nutricionista|academia|treino)\b/,
+  ];
+
+  for (const pattern of offTopicPatterns) {
+    if (pattern.test(normalizedMessage) && !mentionsIfood) {
+      return {
+        decision: 'block',
+        result: {
+          isAllowed: false,
+          category: 'off-topic',
+          reason: 'Só posso responder perguntas relacionadas ao iFood',
+          confidence: 0.8,
+          source: 'local',
+        },
+      };
+    }
+  }
+
+  // === PERMITIR DIRETAMENTE: Menção clara ao iFood ===
+  const ifoodContextPatterns = [
+    /ifood|i-food|i food/,
+    /\b(entregador|entrega|delivery|pedido|cupom|cupons)\b.*\b(app|aplicativo|plataforma)\b/,
+    /\b(taxa|comiss[aã]o|parceiro|restaurante)\b.*\b(cadastr|entregador)\b/,
+  ];
+
+  for (const pattern of ifoodContextPatterns) {
+    if (pattern.test(normalizedMessage)) {
+      // Tem contexto de iFood, mas precisa de LLM para avaliar melhor
+      return { decision: 'needs_llm' };
+    }
+  }
+
+  // === CASOS AMBÍGUOS: Enviar para LLM ===
+  return { decision: 'needs_llm' };
+}
 
 function getModerationPrompt(): string {
   return `<!-- Moderation Prompt v${MODERATION_PROMPT_VERSION} -->
@@ -106,11 +271,13 @@ function getModerationPrompt(): string {
 }
 
 export async function moderateContent(message: string): Promise<ModerationResult> {
+  // Validações básicas
   if (!message || message.trim().length === 0) {
     return {
       isAllowed: false,
       reason: 'Mensagem vazia',
       category: 'inappropriate',
+      source: 'local',
     };
   }
 
@@ -119,13 +286,30 @@ export async function moderateContent(message: string): Promise<ModerationResult
       isAllowed: false,
       reason: 'Mensagem muito longa. Por favor, seja mais conciso.',
       category: 'inappropriate',
+      source: 'local',
     };
   }
 
+  // ============================================================
+  // CAMADA 1: Pré-validação local (rápida, sem custo)
+  // ============================================================
+  const localResult = localPreValidation(message);
+
+  if (localResult.decision === 'allow' || localResult.decision === 'block') {
+    // Decisão tomada localmente - não precisa chamar LLM
+    return localResult.result!;
+  }
+
+  // ============================================================
+  // CAMADA 2: Moderação via LLM (casos ambíguos)
+  // ============================================================
   if (!GROQ_API_KEY || GROQ_API_KEY === '') {
+    // Sem API key, permite por padrão (mas com baixa confiança)
     return {
       isAllowed: true,
       category: 'allowed',
+      confidence: 0.5,
+      source: 'local',
     };
   }
 
@@ -148,9 +332,12 @@ export async function moderateContent(message: string): Promise<ModerationResult
     });
 
     if (!response.ok) {
+      // Fallback: se LLM falhar, usa validação local mais conservadora
       return {
         isAllowed: true,
         category: 'allowed',
+        confidence: 0.5,
+        source: 'local',
       };
     }
 
@@ -178,6 +365,7 @@ export async function moderateContent(message: string): Promise<ModerationResult
         isAllowed: true,
         category: 'allowed',
         confidence: moderationResult.confidence,
+        source: 'llm',
       };
     } else {
       return {
@@ -185,6 +373,7 @@ export async function moderateContent(message: string): Promise<ModerationResult
         reason: moderationResult.reason || 'Conteúdo não permitido',
         category: moderationResult.category === 'off-topic' ? 'off-topic' : 'inappropriate',
         confidence: moderationResult.confidence,
+        source: 'llm',
       };
     }
   } catch (error) {
@@ -194,6 +383,7 @@ export async function moderateContent(message: string): Promise<ModerationResult
       isAllowed: true,
       category: 'allowed',
       confidence: 0.5,
+      source: 'local',
     };
   }
 }
